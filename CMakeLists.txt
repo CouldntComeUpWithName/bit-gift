@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.14..3.24)
 
-project( MyProject 
+project( BitGift 
   VERSION 0.0.0
-  DESCRIPTION "template-project"
+  DESCRIPTION "Utility for sharing and exchanging files between two machines"
   LANGUAGES CXX C )
 
 set(CMAKE_CXX_STANDARD 20) # not the best practice, but who cares
@@ -12,8 +12,31 @@ include(CTest)
 
 include(cmake/target.cmake)
 
-add_subdirectory(app)
-add_subdirectory(library)
+set(EXECUTABLE_NAME bitg)
+
+add_executable(${EXECUTABLE_NAME})
+
+target_compile_definitions(${EXECUTABLE_NAME} PRIVATE EXECUTABLE_NAME="${EXECUTABLE_NAME}")
+
+set(SOURCES 
+    src/main.cpp
+)
+
+target_sources(${EXECUTABLE_NAME} PRIVATE ${SOURCES})
+target_link_libraries(${EXECUTABLE_NAME} PRIVATE asio)
+
+if(CMAKE_CONFIGURATION_TYPES)
+  set_target_properties(${EXECUTABLE_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/$<CONFIG>")
+else()
+  set_target_properties(${EXECUTABLE_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}")
+endif()
+
+if(MSVC)
+  set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${EXECUTABLE_NAME})
+  set_property(TARGET ${EXECUTABLE_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/$<CONFIG>")
+  
+  source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCES})
+endif()
 
 add_subdirectory(3rd-party)
 add_subdirectory(tools)
