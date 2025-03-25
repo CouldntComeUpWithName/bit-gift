@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD 20) # not the best practice, but who cares
 set(CMAKE_CXX_STANDARD_REQUIRED OFF)
 
 include(CTest)
-include(FetchContent)
 
 include(cmake/target.cmake)
 
